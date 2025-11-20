@@ -11,7 +11,7 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 
 # Example schemas (replace with your own):
@@ -38,11 +38,15 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
-
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+# TradeGlass Auth schema
+class Account(BaseModel):
+    """
+    Auth accounts collection schema
+    Collection name: "account"
+    """
+    email: EmailStr = Field(..., description="User email (unique)")
+    name: Optional[str] = Field(None, description="Display name")
+    password_hash: str = Field(..., description="SHA-256 password hash with salt")
+    salt: str = Field(..., description="Per-user salt")
+    provider: str = Field("password", description="Auth provider (password, oauth)")
+    is_active: bool = Field(True, description="Whether the account is active")
